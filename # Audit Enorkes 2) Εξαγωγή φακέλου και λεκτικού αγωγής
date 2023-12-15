@@ -1,0 +1,193 @@
+Audit Report:
+
+Issue: The variable list_ofeileton is assigned the value of list(anathesi_df['Επωνυμία Αποδέκτη']) without any error handling or validation. This could lead to potential issues if the column does not exist in the dataframe or if it contains null values.
+Severity: Moderate
+Diagnosis: It is important to validate the existence of the column and handle any potential null values before assigning it to the variable.
+Proposed Resolution: Add error handling and validation code before assigning the value to list_ofeileton. For example, you can use the following code:
+if 'Επωνυμία Αποδέκτη' in anathesi_df.columns:
+    list_ofeileton = list(anathesi_df['Επωνυμία Αποδέκτη'].dropna())
+else:
+    # Handle the case when the column does not exist
+    list_ofeileton = []
+Code:
+if 'Επωνυμία Αποδέκτη' in anathesi_df.columns:
+    list_ofeileton = list(anathesi_df['Επωνυμία Αποδέκτη'].dropna())
+else:
+    # Handle the case when the column does not exist
+    list_ofeileton = []
+Issue: The variable pattern is assigned the value of r'\b\w\.\b' without any explanation or comment. It is unclear what this pattern is used for.
+Severity: Low
+Diagnosis: It is important to provide comments or explanations for complex regular expressions or patterns to improve code readability and maintainability.
+Proposed Resolution: Add a comment or explanation above the assignment of pattern to clarify its purpose.
+Code:
+# Regular expression pattern to match a single letter followed by a period
+pattern = r'\b\w\.\b'
+Issue: The variable out_path is assigned a hard-coded path without any error handling or validation. This could lead to potential issues if the path does not exist or if the user does not have the necessary permissions to access the path.
+Severity: Moderate
+Diagnosis: It is important to validate the existence of the path and handle any potential errors or exceptions before using it.
+Proposed Resolution: Add error handling and validation code before assigning the value to out_path. For example, you can use the following code:
+import os
+
+out_path = r"C:\Users\pallist\Desktop\ΤΡΕΧΟΝΤΑ\Testing Folder\ΦΑΚΕΛΟΙ ΕΝΟΡΚΩΝ\Results"
+
+if not os.path.exists(out_path):
+    os.makedirs(out_path)
+Code:
+import os
+
+out_path = r"C:\Users\pallist\Desktop\ΤΡΕΧΟΝΤΑ\Testing Folder\ΦΑΚΕΛΟΙ ΕΝΟΡΚΩΝ\Results"
+
+if not os.path.exists(out_path):
+    os.makedirs(out_path)
+Issue: The variable path_to_search_enorkes is assigned a hard-coded path without any error handling or validation. This could lead to potential issues if the path does not exist or if the user does not have the necessary permissions to access the path.
+Severity: Moderate
+Diagnosis: It is important to validate the existence of the path and handle any potential errors or exceptions before using it.
+Proposed Resolution: Add error handling and validation code before assigning the value to path_to_search_enorkes. For example, you can use the following code:
+import os
+
+path_to_search_enorkes = r"C:\Users\pallist\Desktop\ΤΡΕΧΟΝΤΑ\Testing Folder\ΦΑΚΕΛΟΙ ΕΝΟΡΚΩΝ"
+
+if not os.path.exists(path_to_search_enorkes):
+    # Handle the case when the path does not exist
+    path_to_search_enorkes = ""
+Code:
+import os
+
+path_to_search_enorkes = r"C:\Users\pallist\Desktop\ΤΡΕΧΟΝΤΑ\Testing Folder\ΦΑΚΕΛΟΙ ΕΝΟΡΚΩΝ"
+
+if not os.path.exists(path_to_search_enorkes):
+    # Handle the case when the path does not exist
+    path_to_search_enorkes = ""
+Issue: The function get_modified_folder_name does not have any error handling or validation for the input parameters. This could lead to potential issues if the input is not a string or if the pattern is not a valid regular expression.
+Severity: Moderate
+Diagnosis: It is important to validate the input parameters and handle any potential errors or exceptions before using them.
+Proposed Resolution: Add error handling and validation code inside the get_modified_folder_name function. For example, you can use the following code:
+def get_modified_folder_name(folder_name, pattern=PATTERN):
+    """Modify the folder name based on the provided pattern."""
+    if not isinstance(folder_name, str):
+        # Handle the case when the folder_name is not a string
+        return ""
+    
+    try:
+        return re.sub(pattern, '', folder_name)
+    except re.error:
+        # Handle the case when the pattern is not a valid regular expression
+        return ""
+Code:
+def get_modified_folder_name(folder_name, pattern=PATTERN):
+    """Modify the folder name based on the provided pattern."""
+    if not isinstance(folder_name, str):
+        # Handle the case when the folder_name is not a string
+        return ""
+    
+    try:
+        return re.sub(pattern, '', folder_name)
+    except re.error:
+        # Handle the case when the pattern is not a valid regular expression
+        return ""
+Issue: The function get_all_folders has a long and complex implementation, making it difficult to understand and maintain. It would benefit from refactoring and breaking it down into smaller, more manageable functions.
+Severity: Moderate
+Diagnosis: The function get_all_folders performs multiple tasks, including searching for specific folders and files, mapping them to the dataframe, and copying files to the output path. This violates the Single Responsibility Principle and makes the code harder to read and maintain.
+Proposed Resolution: Refactor the get_all_folders function into smaller, more focused functions. For example, you can create separate functions for searching folders, searching files, mapping folders to the dataframe, and copying files to the output path. This will improve code readability and maintainability.
+Code:
+def search_folders(path, list_ofeileton):
+    """Search for specific folders and return a mapping of folder names."""
+    mapping_folders = {name: "-" for name in list_ofeileton}
+    for root, _, _ in os.walk(path):
+        if "Υποθέσεις" in root and "ανάθεσης" in root:
+            for name in list_ofeileton:
+                # Search for specific folders and update the mapping
+                # ...
+
+    return mapping_folders
+
+def search_files(path, list_ofeileton, mapping_folders, out_path):
+    """Search for specific files and return a mapping of file names."""
+    mapping_files = {name: "-" for name in list_ofeileton}
+    for root, _, files in os.walk(path):
+        if "Υποθέσεις" in root and "ανάθεσης" in root:
+            for name in list_ofeileton:
+                # Search for specific files and update the mapping
+                # ...
+
+    return mapping_files
+
+def map_folders_to_dataframe(df, mapping_folders):
+    """Map folders to the dataframe."""
+    df['Φάκελος'] = df['Αντίδικος'].map(mapping_folders)
+    # ...
+
+def copy_files_to_output(mapping_files, out_path):
+    """Copy files to the output path."""
+    for name, file_path in mapping_files.items():
+        # Copy files to the output path
+        # ...
+
+mapping_folders = search_folders(path_to_search_enorkes, list_ofeileton)
+mapping_files = search_files(path_to_search_enorkes, list_ofeileton, mapping_folders, out_path)
+map_folders_to_dataframe(df1, mapping_folders)
+copy_files_to_output(mapping_files, out_path)
+Issue: The function get_folder_or_filename does not handle the case when the input is not a string. This could lead to potential errors or exceptions if the input is not a valid string.
+Severity: Low
+Diagnosis: It is important to handle the case when the input is not a string to prevent potential errors or exceptions.
+Proposed Resolution: Add error handling and validation code inside the get_folder_or_filename function. For example, you can use the following code:
+def get_folder_or_filename(x, position=-1):
+    if not isinstance(x, str):
+        # Handle the case when x is not a string
+        return ""
+    
+    parts = x.split("\\")
+    if len(parts) > 1:
+        return parts[position]
+    return ""
+Code:
+def get_folder_or_filename(x, position=-1):
+    if not isinstance(x, str):
+        # Handle the case when x is not a string
+        return ""
+    
+    parts = x.split("\\")
+    if len(parts) > 1:
+        return parts[position]
+    return ""
+Issue: The variable df1['Φάκελος'] is modified multiple times without any explanation or comment. It is unclear what each modification does and why it is necessary.
+Severity: Low
+Diagnosis: It is important to provide comments or explanations for each modification of the variable to improve code readability and maintainability.
+Proposed Resolution: Add comments or explanations above each modification of df1['Φάκελος'] to clarify its purpose.
+Code:
+# Modify the 'Φάκελος' column to include the subfolders
+df1['Φάκελος'] = (r"\\lawoffice\\Applications\\ScanDocs\\ΔΕΔΔΗΕ scandocs\\" 
+                  + df1['Φάκελος'].apply(lambda x: get_folder_or_filename(x, -3)) # For subfolders (eg Θεσσαλονίκη)
+                  + "\\" 
+                  + df1['Φάκελος'].apply(lambda x: get_folder_or_filename(x, -2)) 
+                  + "\\" 
+                  + df1['Φάκελος'].apply(lambda x: get_folder_or_filename(x, -1)))
+
+# Remove the 'ΦΑΚΕΛΟΙ ΕΝΟΡΚΩΝ' from the 'Φάκελος' column
+df1['Φάκελος'] = df1['Φάκελος'].astype(str) 
+df1['Φάκελος'] = df1['Φάκελος'].apply(lambda x : x.replace("ΦΑΚΕΛΟΙ ΕΝΟΡΚΩΝ",""))
+Issue: The variable empty is assigned the value of os.path.join(out_path,'empty.docx') without any error handling or validation. This could lead to potential issues if the path does not exist or if the user does not have the necessary permissions to access the path.
+Severity: Moderate
+Diagnosis: It is important to validate the existence of the path and handle any potential errors or exceptions before using it.
+Proposed Resolution: Add error handling and validation code before assigning the value to empty. For example, you can use the following code:
+import os
+
+empty = os.path.join(out_path, 'empty.docx')
+
+if not os.path.exists(out_path):
+    os.makedirs(out_path)
+Code:
+import os
+
+empty = os.path.join(out_path, 'empty.docx')
+
+if not os.path.exists(out_path):
+    os.makedirs(out_path)
+Issue: The variable PATTERN is defined as a global variable without any explanation or comment. It is unclear what this pattern is used for.
+Severity: Low
+Diagnosis: It is important to provide comments or explanations for complex regular expressions or patterns to improve code readability and maintainability.
+Proposed Resolution: Add a comment or explanation above the definition of PATTERN to clarify its purpose.
+Code:
+# Regular expression pattern to match a single letter followed by a period
+PATTERN = r'\b\w\.\b'
+Overall, the code could benefit from better error handling, validation of input parameters, and improved code organization. Refactoring the get_all_folders function into smaller, more focused functions would also improve code readability and maintainability.
