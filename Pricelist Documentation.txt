@@ -1,0 +1,55 @@
+1) Loading bar
+Set a maximum amount of seconds
+Start counter from 0 f
+Each second update by 1
+
+2) Load and copy df
+Select an Excel file.
+Load the Excel file into a DataFrame, which we'll refer to as df.
+Copy df into df1. 
+Adjust df1 columns based on the first row values and remove the first row from df1 since it's now represented as the column headers.
+
+17-10-2023 -> Remove the lines that do not fall into the Timokatalogos_keys_list (Unique Προμηθ,ΝΕ,Φάση,Αφορά Σε)
+3) Replace nans and values with booleans
+flag = 'Φάση Ενέργεια Τιμολόγησης'
+eksaireseis = 'Έλεγχοι Εξαιρέσεις'
+akirosi =  'ID3 Ακύρωση ενέργειας'
+
+For columns: 'ID9 Μη καταχωρημένη η επιπλέον φάση προδιαγραφής' and 'ID10 Μη καταχωρημένη σχέση Συμβολαιογράφος ': 
+    Replace any NaN (Not a Number) values with empty strings 
+    Replace empty strings and 0 with False
+    Convert any numbers between 1 to 10 to True 
+    Convert the data in the columns listed in col_list and the flag_column into a binary format.
+Replace Nan with blanks in 'Έλεγχοι Εξαιρέσεις'.
+
+4) Create series/column indicating which columns are true in the same row
+
+Create a filtered df2 with only the columns that are checked from df1
+Generate a concatenated string in df2 for each row that denotes which columns from col_list have a True value. :
+    pd.Index(col_list): Convert col_list into a pandas Index.
+    Add the string ' & ' to the end of each element in the Index.
+    Dot product-> Concatenate the column names where the cell in df2 is True (or non-zero)
+    .str[:-1]: This slices off the trailing '&' from each string in the Series
+
+5) Create a series/column m1 indicating which columns have at least one true value
+
+    m1 = df1[col_list].any(axis=1) Create a boolean Series that identifies rows that have at least one True value in the given columns
+
+
+6) Create df1['Test'] based on multiple conditions :
+    If there is a value in 'Έλεγχοι Εξαιρέσεις' -> Εξαίρεση απo Pricelist
+    If 'ID3 Ακύρωση ενέργειας' is True -> Ακύρωση ενέργειας
+    m1 & ~df1[flag]:If m1 is False (no errors) and the value in the column flag is also False (δεν υπάρχει φάση). -> 'Χωρίς Ενέργεια Τιμολόγησης'
+    ~m1 & df1[flag]:If m1 is False(no errors) and the value in the column flag is True. (υπάρχει φάση)->  'Απαιτείται Επιπλέον Έλεγχος'
+    m1 & ~df1[flag]:If m1 is True (errors) and the value in the column flag is False. (δεν υπάρχει φάση)-> 'Χωρίς Ενέργεια Τιμολόγησης'
+    
+7) Clean Test column
+Clean up its values: Remove any trailing "&" and replace underscores with "&".
+Column Count Erorrs counts the occurrences of the "&" symbol in the 'Test' column,indicating  how errors are present in each row.
+The 'Test' column is renamed to 'Αποτέλεσμα'
+
+8) Convert date values to a consistent date format.
+Covnert df1['Ημ Φάσης'] to date
+Handle any conversion errors, possibly replacing them with a default date or removing those entries.
+Filter df1 rows > 31.12.2021
+Excel File Formatting & Saving
