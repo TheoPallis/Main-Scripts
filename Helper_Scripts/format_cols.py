@@ -4,7 +4,7 @@ from Helper_Scripts.set_values import all_possible_etairies_combinations_list,sp
 
 
 file_name = '3869 par.txt'
-folder_path = r'../TFT_20_12-main/Helper Scripts/file_name'
+folder_path = r'../TFT_20_12-main/Mapping Files/file_name'
 # Construct the full path to the file
 text_path_3869= os.path.join(os.path.dirname(os.path.realpath(__file__)),file_name)
 

@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 file_name = 'mapping recovery.xlsx'
-folder_path = r'../TFT_20_12-main/Helper Scripts/file_name'
+folder_path = r'../TFT_20_12-main/Mapping Files/file_name'
 # Construct the full path to the file
 mapping_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),file_name)
 
